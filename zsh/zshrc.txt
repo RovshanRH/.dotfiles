@@ -1,0 +1,134 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.config/zsh/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+# Enable Powerlevel10k instant prompt (should be at the very top of .zshrc)
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+
+# Для начала зададим переменные xdg, если те не заданы
+# Эти переменные используются многими программами, и если их не задать, то пользовательская директория будет завалена файлами с точкой в начале имени 
+# https://wiki.archlinux.org/title/XDG_Base_Directory
+export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+
+# Далее определим эту переменную, чтобы конфиги zsh искались в этой директории
+export ZDOTDIR="${XDG_CONFIG_HOME}/zsh"
+
+# Так же добавим пути до бинарников в домашнем каталоге в PATH
+# и переместим .zfunc из домашней директории в $ZDOTDIR
+typeset -U path fpath
+path=(~/.local/bin ~/bin $path)
+fpath+=("$ZDOTDIR/.zfunc")
+
+
+# Lines configured by zsh-newuser-install
+HISTFILE=~/.config/zsh/.histfile
+HISTSIZE=1000
+SAVEHIST=5000
+setopt beep extendedglob
+bindkey -e
+# End of lines configured by zsh-newuser-install
+
+# The following lines were added by compinstall
+zstyle :compinstall filename '/home/rovian/.config/zsh/.zshrc'
+
+autoload -Uz compinit
+compinit
+# End of lines added by compinstall
+
+# Загрузка цветовой системы ДО использования цветов
+autoload -U colors && colors
+
+# Корректное определение PS1 с цветами
+# PS1="%{$fg[green]%}%m@%n%{$reset_color%}:%{$fg[blue]%}%~%{$reset_color%} %{$fg[yellow]%}▶%{$reset_color%} "
+# ЗАМЕНИТЕ текущий блок antidote на этот:
+
+# Antidote plugin manager
+antidote_zsh="$ZDOTDIR/.antidote/antidote.zsh"
+
+# Установка antidote если его нет
+if [[ ! -f "$antidote_zsh" ]]; then
+  echo "Installing antidote..."
+  git clone --depth=1 https://github.com/mattmc3/antidote.git "$ZDOTDIR/.antidote"
+fi
+
+# Загрузка плагинов
+if [ -f "$antidote_zsh" ]; then
+  source "$antidote_zsh"
+  zsh_plugins=${ZDOTDIR}/.zsh_plugins
+  if [[ ! ${zsh_plugins}.zsh -nt ${zsh_plugins}.txt ]]; then
+    echo "Updating zsh plugins..."
+    antidote bundle <${zsh_plugins}.txt >${zsh_plugins}.zsh
+  fi
+  source ${zsh_plugins}.zsh
+else
+  echo "Antidote not found! Please install it."
+fi
+
+source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
+
+export ZSH_THEME="powerlevel10k/powerlevel10k"
+
+# Альтернативный вариант PS1 (более читаемый):
+PS1="%F{green}%m@%n%f:%F{blue}%~%f %F{yellow}▶%f "
+
+# Зададим путь до директории с плагинами Oh My Zsh
+export ZSH="${ZDOTDIR}/oh-my-zsh"
+
+# Вставка \ перед ? и тп
+# Меня лично это бесит
+DISABLE_MAGIC_FUNCTIONS=true
+
+# Здесь подключается antidote
+
+# Если antidote установлен через пакетный менеджер, то путь до него будет выглядеть примерно так
+# antidote_zsh='/usr/share/zsh-antidote.zsh'
+
+
+
+# Настройки истории
+export HISTSIZE=100000
+export SAVEHIST=100000
+
+# Файл истории так же храним в ~/.config/zsh
+export HISTFILE=$ZDOTDIR/.zsh_history
+
+# Всякие алиасы я предпочитаю хранить как файлы с расширением `.zsh` в ~/.config/zsh/zshrc.d
+
+# Тут мы создаем директорию, если ее нет
+if [ ! -d "$ZDOTDIR/zshrc.d" ]; then
+  mkdir -p "$ZDOTDIR/zshrc.d"
+fi
+
+# А тут: подключаем вспомогательные файлы
+# for src in $ZDOTDIR/zshrc.d/*.zsh; do
+#   . "$src"
+# done
+
+
+# Настройка перемещения курсора с Ctrl+стрелки
+bindkey "^[[1;5C" forward-word    # Ctrl+Right
+bindkey "^[[1;5D" backward-word   # Ctrl+Left
+bindkey "^[[1;3C" forward-word    # Alt+Right (альтернатива)
+bindkey "^[[1;3D" backward-word   # Alt+Left (альтернатива)
+
+# Дополнительные полезные привязки:
+bindkey "^[[H" beginning-of-line  # Home
+bindkey "^[[F" end-of-line        # End
+bindkey "^[[3~" delete-char       # Delete
+bindkey "^H" backward-delete-word # Ctrl+Backspace
+bindkey "^[[3;5~" delete-word     # Ctrl+Delete
+
+# source ~/.config/zsh/.zshrc
+
+# FastFetch при запуске терминала
+fastfetch
+
+# source ~/.config/zsh/plugins/powerlevel10k/powerlevel10k.zsh-theme
+
+# To customize prompt, run `p10k configure` or edit ~/.config/zsh/.p10k.zsh.
+[[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh

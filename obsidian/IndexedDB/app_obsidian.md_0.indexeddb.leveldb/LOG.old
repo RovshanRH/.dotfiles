@@ -1,0 +1,12 @@
+2025/09/07-00:14:51.680 8a4d Reusing MANIFEST /home/rovian/.config/obsidian/IndexedDB/app_obsidian.md_0.indexeddb.leveldb/MANIFEST-000001
+2025/09/07-00:14:51.681 8a4d Recovering log #55
+2025/09/07-00:14:51.707 8a4d Reusing old log /home/rovian/.config/obsidian/IndexedDB/app_obsidian.md_0.indexeddb.leveldb/000055.log 
+2025/09/07-00:16:58.279 8aab Level-0 table #60: started
+2025/09/07-00:16:58.365 8aab Level-0 table #60: 1133585 bytes OK
+2025/09/07-00:16:58.417 8aab Delete type=0 #55
+2025/09/07-00:17:15.007 8a4e Compacting 1@1 + 1@2 files
+2025/09/07-00:17:15.097 8a4e Generated table #61@1: 4163 keys, 1358953 bytes
+2025/09/07-00:17:15.097 8a4e Compacted 1@1 + 1@2 files => 1358953 bytes
+2025/09/07-00:17:15.141 8a4e compacted to: files[ 0 0 1 0 0 0 0 ]
+2025/09/07-00:17:15.142 8a4e Delete type=2 #60
+2025/09/07-00:17:15.143 8a4e Delete type=2 #57
